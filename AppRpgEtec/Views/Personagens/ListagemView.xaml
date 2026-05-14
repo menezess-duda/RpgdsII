@@ -8,7 +8,7 @@
     <Shell.TitleView>
         <Grid ColumnDefinitions="*,Auto">
             <Label 
-                Text="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                Text="menezes"
                 VerticalOptions="Center" />
 
             <Button 
