@@ -32,6 +32,9 @@ namespace AppRpgEtec.ViewModels.Usuarios
         }
 
         //As propriedades serão chamadas na View futuramente
+
+        private CancellationTokenSource _cancellationTokenSource;
+        private bool _isCheckingLocation;
         #region AtributosPropriedades
         private string login = string.Empty;
         public string Login
@@ -67,6 +70,23 @@ namespace AppRpgEtec.ViewModels.Usuarios
 
                 if (!string.IsNullOrEmpty(uAutenticado.Token))
                 {
+                    //
+                    _isCheckingLocation = true;
+                    _cancellationTokenSource = new CancellationTokenSource();
+                    GeolocationRequest request = new GeolocationRequest(GeolocationAccuracy.Medium,TimeSpan.FromSeconds(10));
+
+                    Location location = await Geolocation.Default.GetLocationAsync(request, _cancellationTokenSource.Token);
+
+                    Usuario uLoc = new Usuario();
+                    uLoc.Id = uAutenticado.Id;
+                    uLoc.Latitude = location.Latitude;
+                    uLoc.Longitude = location.Longitude;
+
+                    UsuarioService uServiceLoc = new UsuarioService(uAutenticado.Token);
+                    await uServiceLoc.PutAtualizarLocalizacaoAsync(uLoc);
+                    //
+                    
+                    
                     string mensagem = $"Bem-vindo(a) {uAutenticado.Username}.";
                     //Guardando dados do usuário para uso futuro
                     Preferences.Set("UsuarioId", uAutenticado.Id);
